@@ -92,7 +92,7 @@ resources:
     BlobsBucket:
       Type: AWS::S3::Bucket
       Properties:
-        BucketName: blobs-bucket-for-rekognition
+        BucketName: ${file(./ResourceNames.yml):BucketName}
         PublicAccessBlockConfiguration:
           BlockPublicAcls: true
           BlockPublicPolicy: true
@@ -103,7 +103,7 @@ resources:
     BlobsTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: BlobsTableV1
+        TableName: ${file(./ResourceNames.yml):TableName}
         AttributeDefinitions:
           - AttributeName: ID
             AttributeType: S
