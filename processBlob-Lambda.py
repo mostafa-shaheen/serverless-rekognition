@@ -4,18 +4,19 @@ import json
 import urllib.request
 import urllib.parse
 import urllib.error
+import os
 
 
 print('Loading function')
 confidence_threshold = 90
-
+table_name = os.environ.get("ENV_TABLE_NAME")
 rekognition = boto3.client('rekognition')
 
 # --------------- Helper Functions to call Rekognition APIs ------------------
 
 def detect_labels(bucket, key):
     
-    table = boto3.resource('dynamodb').Table('BlobsTableV1')
+    table = boto3.resource('dynamodb').Table(table_name)
     
     try:
 
