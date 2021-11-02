@@ -8,7 +8,7 @@ Simple API for the recognition of images using AWS Rekognition on the back-end. 
 2. npm: 7.7.6
 3. node: v15.14.0
 
-## Installation
+## Deployment
 1. Clone the repo and `cd` to its directory.
 2. Run `serverless plugin install -n serverless-apigateway-service-proxy`.
 3. Run `sls deploy`
