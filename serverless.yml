@@ -9,6 +9,9 @@ provider:
   runtime: python3.8
   region: 'us-east-1'
   stage: 'dev'
+  environment:
+    ENV_BUCKET_NAME: ${file(./ResourceNames.yml):BucketName}
+    ENV_TABLE_NAME: ${file(./ResourceNames.yml):TableName}
   lambdaHashingVersion: '20201221'
 
 
