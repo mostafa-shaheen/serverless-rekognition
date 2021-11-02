@@ -1,0 +1,144 @@
+
+service: Image-Rekognition
+# app and org for use with dashboard.serverless.com
+#app: your-app-name
+#org: your-org-name
+
+provider:
+  name: aws
+  runtime: python3.8
+  region: 'us-east-1'
+  stage: 'dev'
+  lambdaHashingVersion: '20201221'
+
+
+  
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - s3:PutObject
+        - s3:ListBucket
+        - s3:GetObject
+      Resource: arn:aws:s3:::blobs-bucket-for-rekognition/*
+      
+      
+    - Effect: 'Allow'
+      Action: 
+        - 'rekognition:DetectLabels'
+      Resource: "*"
+      
+    - Effect: Allow
+      Action:
+        - dynamodb:DescribeTable
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      # Restrict our IAM role permissions to
+      # the specific table for the stage
+      Resource:
+        - "Fn::GetAtt": [ BlobsTable, Arn ]
+        
+    - Effect: Allow
+      Action: 'cloudwatch:*'
+      Resource: 'arn:aws:cloudwatch:*'
+
+functions:
+  creatBlob:
+    handler: creatBlob.handler
+    environment:
+      BUCKET_NAME: !Ref BlobsBucket     
+    events:
+      - http:
+          path: blobs
+          method: post
+          request:
+            parameters:
+              paths:
+                callback-url: false
+          
+  processBlob-Lambda:
+    handler: processBlob-Lambda.handler   
+    events:
+      - s3:
+          bucket: blobs-bucket-for-rekognition
+          event: s3:ObjectCreated:*
+          existing: true
+          
+  MakeCallback:
+    handler: MakeCallback.handler   
+    events:
+      - stream:
+          type: dynamodb
+          batchSize: 1
+          startingPosition: LATEST
+          arn:
+            Fn::GetAtt:
+              - BlobsTable
+              - StreamArn
+    iamRoleStatements:
+      - Effect: Allow
+        Action: 
+          - dynamodb:ListStreams
+          - dynamodb:DescribeTable
+          - dynamodb:GetItem
+        Resource: 
+        - "Fn::GetAtt": [ BlobsTable, Arn ]
+
+resources:
+  Resources:
+    BlobsBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: blobs-bucket-for-rekognition
+        PublicAccessBlockConfiguration:
+          BlockPublicAcls: true
+          BlockPublicPolicy: true
+          IgnorePublicAcls: true
+          RestrictPublicBuckets: true
+         
+         
+    BlobsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: BlobsTableV1
+        AttributeDefinitions:
+          - AttributeName: ID
+            AttributeType: S
+
+        KeySchema:
+          - AttributeName: ID
+            KeyType: HASH
+
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+          
+        StreamSpecification:
+          StreamViewType: NEW_IMAGE
+
+custom:
+  apiGatewayServiceProxies:
+
+    - dynamodb:
+        path: /blobs/{blob_id}
+        method: get
+        tableName: { Ref: 'BlobsTable' }
+        hashKey:
+          queryStringParam: ID # use query string parameter
+          attributeType: S
+        action: GetItem
+        cors: true    
+ 
+
+package:
+  exclude:
+    - 'node_modules/**' 
+    #- '!node_modules/serverless-apigateway-service-proxy'
+  #excludeDevDependencies: false
+  
+
+plugins:
+  - serverless-apigateway-service-proxy
