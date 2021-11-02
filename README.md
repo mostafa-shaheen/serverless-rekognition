@@ -22,7 +22,7 @@ Simple API for the recognition of images using AWS Rekognition on the back-end. 
 
 ## Test Workflow
  The test_output folder includes image detections for multiple test images.
- #### note
- tests 6 and 7 are showing the output of  
+ #### Note
+ Tests 6 and 7 are showing the output of  
  -  uploading black image (showing example of bad detection), having a Warning message in the returned record, and
  -  uploading .txt file which is not acceptable format for detection. having an Error message in the returned record
