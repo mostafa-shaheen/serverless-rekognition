@@ -22,8 +22,7 @@ provider:
         - s3:PutObject
         - s3:ListBucket
         - s3:GetObject
-      Resource: 
-         - "Fn::GetAtt": [ BlobsBucket, Arn ]
+      Resource: "arn:aws:s3:::${file(./ResourceNames.yml):BucketName}/*"
       
     - Effect: 'Allow'
       Action: 
