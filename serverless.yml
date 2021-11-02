@@ -1,4 +1,4 @@
-
+frameworkVersion: "^1.83.3"
 service: Image-Rekognition
 # app and org for use with dashboard.serverless.com
 #app: your-app-name
