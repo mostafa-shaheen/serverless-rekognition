@@ -4,7 +4,7 @@ import time
 import os
 
 table_name = os.environ.get("ENV_TABLE_NAME")
-bucket_name = os.environ.get("ENV_TABLE_NAME")
+bucket_name = os.environ.get("ENV_BUCKET_NAME")
 
 def handler(event, context):
     s3 = boto3.client("s3")
