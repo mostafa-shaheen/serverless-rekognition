@@ -11,7 +11,8 @@ Simple API for the recognition of images using AWS Rekognition on the back-end. 
 ## Deployment
 1. Clone the repo and `cd` to its directory.
 2. Run `serverless plugin install -n serverless-apigateway-service-proxy`.
-3. Run `sls deploy`
+3. Rename the bucket name (must be globally unique) in **ResourceNames.yml**
+4. Run `sls deploy`
 
 ## User Workflow
 1. Send request with optionally provided callback_url in request body. Response return unique upload_url.
