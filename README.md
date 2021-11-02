@@ -1,5 +1,5 @@
 # Serverless App for image recognition
-simple API for the recognition of images using AWS Rekognition on the back-end. Users for this API are other developers. The API stores an image, does image recognition on it and returns results to the user in two ways, with :
+Simple API for the recognition of images using AWS Rekognition on the back-end. Users for this API are other developers. The API stores an image, does image recognition on it and returns results to the user in two ways, with :
 1. A callback. 
 2. A GET endpoint.
 
